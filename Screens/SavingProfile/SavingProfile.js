@@ -111,7 +111,7 @@ class SavingProfile extends Component {
         }
         const userData = await SavingUserData(userObj)
         await this.props.loginUser(userData)
-        // this.props.navigation.replace('Dashboard')        
+        this.props.navigation.replace('Home')        
       }
     
 

@@ -7,10 +7,26 @@ import {
 
 import CustomButton from '../../Components/CustomButton/CustomButton'
 import { loginWithFacebook } from '../../Config/Firebase/Firebase'
-export default class Login extends Component {
+import { connect } from 'react-redux'
+
+class Login extends Component {
 
     static navigationOptions = {
         header : null
+    }
+
+    componentDidMount(){
+        console.log('Login' , this.props);
+        if(this.props.userObj){
+            this.props.navigation.replace('Home')
+        }
+    }
+
+    componentWillReceiveProps(nextProps){
+        console.log('Login_Next' , nextProps);
+        if(nextProps.userObj){
+            nextProps.navigation.replace('Home')
+        } 
     }
 
     async login(){
@@ -31,6 +47,19 @@ export default class Login extends Component {
         )
     }
 }
+
+const mapDispatchToProps = (dispatch) => {
+    return {}
+}
+const mapStateToProps = (state) => {
+
+    return {
+        userObj : state.authReducer.user
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login)
+
 
 const styles = StyleSheet.create({
     container: {
