@@ -14,9 +14,8 @@ export default class Login extends Component {
     }
 
     async login(){
-        const userObj = await loginWithFacebook()
-        console.log(userObj);
-        
+        const userObj = await loginWithFacebook()   
+        this.props.navigation.push('SavingProfile' , {userObj})
     }
     render() {
         return (

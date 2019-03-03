@@ -11,6 +11,7 @@ var config = {
   firebase.initializeApp(config);
 
 const db = firebase.firestore()
+const storageRef = firebase.storage().ref()
 
 // Facebook login function
 const loginWithFacebook = async () => {
@@ -35,6 +36,31 @@ const loginWithFacebook = async () => {
     }
   }
 
+  const SavingUserData = async (userObj) =>{
+    const uid = userObj.userUid
+  
+  // If Profile Pic Url Is Blob
+    if(typeof userObj.profilePicUrl === 'object'){
+      let name = `${Date.now()} - ${uid}`
+      let message = userObj.profilePicUrl
+      await storageRef.child(name).put(message)
+      const url = await storageRef.child(name).getDownloadURL();
+      userObj.profilePicUrl = url
+    }
+  
+       db.collection('users').doc(uid).set({
+          userName : userObj.userName,
+          profilePicUrl : userObj.profilePicUrl,
+          contactNum : userObj.contactNum,
+          userUid : userObj.userUid,
+          lat : userObj.lat,
+          long : userObj.long
+        })  
+        return userObj
+  }
+  
+
   export {
-    loginWithFacebook
+    loginWithFacebook,
+    SavingUserData
   }
