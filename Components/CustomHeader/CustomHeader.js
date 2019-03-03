@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
-import { Text, View } from 'react-native'
+import { connect } from 'react-redux'
 import {  
-    StyleSheet, 
     Image , 
     TouchableOpacity 
 } from 'react-native'
@@ -16,9 +15,15 @@ import {
     Right 
 } from 'native-base';
 
+import { logoutUser } from '../../Redux/actions/authActions'
 import { withNavigation } from 'react-navigation'
 
 class CustomHeader extends Component {
+
+    logout(){
+        this.props.logoutUser()
+        this.props.navigation.replace('Login')
+    }      
     render(){
         return(
             <Header style={{marginTop : 25 , backgroundColor : '#fff'}}>
@@ -38,13 +43,34 @@ class CustomHeader extends Component {
                 <Title style={{color : 'black'}}>{this.props.title}</Title>
             </Body>
             <Right>
+                {this.props.addCircleIcon &&
                 <TouchableOpacity
-                    // onPress = {()=>{this.logout()}}      
-                    // style={{marginBottom : 10}}
+                    onPress = {()=>{this.props.navigation.push('circles')}}
+                >
+                <Image 
+                    source={require('../../assets/icons/addCircle.png')} 
+                    style={{width :40 , height :40 , marginRight : 5}} 
+                    />
+                </TouchableOpacity>
+                }
+                {this.props.msgIcon &&
+                    <TouchableOpacity>
+                    <Image 
+                        source={require('../../assets/icons/msgIcon.png')} 
+                        style={{width :40 , height :40 , marginRight : 5}} 
+                        />
+                    </TouchableOpacity>
+                    
+
+                }
+
+                <TouchableOpacity
+                    onPress = {()=>{this.logout()}}      
+                    style={{marginBottom : 5}}
                 >
                 <Image 
                     source={require('../../assets/icons/logoutIcon.png')} 
-                    style={{width : 40 , height : 40}} 
+                    style={{width : 30 , height : 30}} 
                     />
                 </TouchableOpacity>
             </Right>
@@ -53,4 +79,15 @@ class CustomHeader extends Component {
     }
 }
 
-export default withNavigation(CustomHeader)
+const mapDispatchToProps = (dispatch) => {
+    return {
+      logoutUser: () => dispatch(logoutUser())
+    }
+
+}
+const mapStateToProps = (state) => {
+
+  return {}
+}
+
+export default withNavigation(connect(mapStateToProps, mapDispatchToProps)(CustomHeader))

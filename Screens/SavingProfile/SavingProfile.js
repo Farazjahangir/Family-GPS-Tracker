@@ -25,7 +25,7 @@ import CustomButton from '../../Components/CustomButton/CustomButton'
 import { SavingUserData }  from '../../Config/Firebase/Firebase'
 import { connect } from 'react-redux'
 import { loginUser } from '../../Redux/actions/authActions'
-import makeBlobFromURI from '../../helper'
+import { makeBlobFromURI } from '../../helper'
 
 class SavingProfile extends Component {
     constructor() {

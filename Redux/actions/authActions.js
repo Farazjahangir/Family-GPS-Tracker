@@ -7,6 +7,13 @@ const loginUser = (user) =>{
     }
 } 
 
+const logoutUser = () =>{
+    return {
+        type : 'LOGOUT_USER'
+    }
+} 
+
 export {
-    loginUser
+    loginUser,
+    logoutUser
 }

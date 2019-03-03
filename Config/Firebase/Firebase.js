@@ -58,9 +58,36 @@ const loginWithFacebook = async () => {
         })  
         return userObj
   }
+
+  const checkingUserProfile = async () =>{
+    try{
+        const userUid =  firebase.auth().currentUser.uid;
+        const userData = await db.collection('users').doc(userUid).get()
+        return userData
+    }
+    catch(e){
+      throw 'not found'
+    }
+  }
+
+  const creatingCircle = async (circleObj)=>{    
+    const userUid =  firebase.auth().currentUser.uid;
+    const members = []
+    members.push(userUid)
+    db.collection('Circles').add({
+        admin : userUid,
+        circleCode : circleObj.circleCode,
+        circleName : circleObj.circleName,
+        members
+    })
+    return "success"
+  }
+  
   
 
   export {
     loginWithFacebook,
-    SavingUserData
+    SavingUserData,
+    checkingUserProfile,
+    creatingCircle
   }

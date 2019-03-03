@@ -6,8 +6,9 @@ import {
 } from 'react-native'
 
 import CustomButton from '../../Components/CustomButton/CustomButton'
-import { loginWithFacebook } from '../../Config/Firebase/Firebase'
+import { loginWithFacebook, checkingUserProfile } from '../../Config/Firebase/Firebase'
 import { connect } from 'react-redux'
+import { loginUser } from '../../Redux/actions/authActions'
 
 class Login extends Component {
 
@@ -30,8 +31,18 @@ class Login extends Component {
     }
 
     async login(){
-        const userObj = await loginWithFacebook()   
-        this.props.navigation.push('SavingProfile' , {userObj})
+        const userObj = await loginWithFacebook() 
+        let checkingUser = await checkingUserProfile()
+
+        if (checkingUser.exists) {
+            checkingUser =  checkingUser.data()
+            this.props.loginUser(checkingUser)
+            this.props.navigation.replace('Home')
+            this.setState({isLoading : false})
+        }  
+        else{
+            this.props.navigation.push('SavingProfile' , {userObj})
+        }
     }
     render() {
         return (
@@ -49,7 +60,9 @@ class Login extends Component {
 }
 
 const mapDispatchToProps = (dispatch) => {
-    return {}
+    return {
+        loginUser: (userData) => dispatch(loginUser(userData))
+    }
 }
 const mapStateToProps = (state) => {
 
