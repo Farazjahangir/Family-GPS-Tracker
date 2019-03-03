@@ -2,7 +2,7 @@ import { createStackNavigator, createAppContainer, createDrawerNavigator } from 
 import Login from '../../Screens/Login/Login'
 import SavingProfile from '../../Screens/SavingProfile/SavingProfile'
 import Home from '../../Screens/Home/Home'
-import circles from '../../Screens/circles/circles'
+import Circles from '../../Screens/Circles/Circles'
 import CreateCirlce from '../../Screens/CreateCircle/CreateCircle'
 
 
@@ -23,8 +23,8 @@ const AppNavigator = createStackNavigator({
     Home: {
         screen: DrawerNavigator,
     },
-    circles : {
-        screen : circles
+    Circles : {
+        screen : Circles
     },
     CreateCirlce: {
         screen: CreateCirlce,
