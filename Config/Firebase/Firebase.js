@@ -98,6 +98,18 @@ const loginWithFacebook = async () => {
     }
   }
   
+  const geetingCircleMembers = (membersArr)=>{
+    const usersArrObj = []
+    return new Promise((resolve , reject)=>{
+        membersArr.map((uid)=>{
+         db.collection('users').doc(uid).get()
+         .then((doc)=>{
+           usersArrObj.push(doc.data()) 
+           resolve(usersArrObj)
+         })
+        })
+    })
+  }
   
 
   export {
@@ -105,5 +117,6 @@ const loginWithFacebook = async () => {
     SavingUserData,
     checkingUserProfile,
     creatingCircle,
-    gettingCircles
+    gettingCircles,
+    geetingCircleMembers
   }

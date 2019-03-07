@@ -4,12 +4,17 @@ import SavingProfile from '../../Screens/SavingProfile/SavingProfile'
 import Home from '../../Screens/Home/Home'
 import Circles from '../../Screens/Circles/Circles'
 import CreateCirlce from '../../Screens/CreateCircle/CreateCircle'
+import CircleDetails from '../../Screens/CircleDetails/CircleDetails'
+import InviteScreen from '../../Screens/InviteScreen/InviteScreen'
 
 
 
 const DrawerNavigator = createDrawerNavigator({
     Home: {
         screen: Home,
+    },
+    Circles : {
+        screen : Circles
     },
 });
 
@@ -29,6 +34,12 @@ const AppNavigator = createStackNavigator({
     CreateCirlce: {
         screen: CreateCirlce,
     },
+    CircleDetails: {
+        screen: CircleDetails,
+    },
+    InviteScreen : {
+        screen : InviteScreen
+    }
 },{
     headerMode: 'none',
     navigationOptions: {

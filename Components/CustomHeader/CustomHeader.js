@@ -45,7 +45,7 @@ class CustomHeader extends Component {
             <Right>
                 {this.props.addCircleIcon &&
                 <TouchableOpacity
-                    onPress = {()=>{this.props.navigation.push('circles')}}
+                    onPress = {()=>{this.props.navigation.push('Circles')}}
                 >
                 <Image 
                     source={require('../../assets/icons/addCircle.png')} 

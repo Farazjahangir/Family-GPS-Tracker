@@ -56,8 +56,7 @@ class circles extends Component {
         <List style={{ marginTop: 30 }}>
           {!!userCircles &&
             userCircles.map((val, i) => {
-              return <TouchableOpacity onPress={() => {this.props.navigation.push('CircleDetails' , {circleObj : val})}}>
-                <ListItem avatar>
+              return <ListItem avatar key={i}>
                   <Left>
                     <Thumbnail source={require('../../assets/icons/user.png')} style={{ width: 20, height: 20 }} />
                     <Text>{val.members.length}</Text>
@@ -66,12 +65,12 @@ class circles extends Component {
                     <Text>{val.circleName}</Text>
                   </Body>
                   <Right>
-                    <TouchableOpacity onPress = {()=>{}}>
-                      <Icon name="arrow-forward" />
+                    <TouchableOpacity onPress = {()=>{this.props.navigation.push('CircleDetails' ,  {circleObj : val})}}>
+                      <Image source = {require('../../assets/icons/rightArrow.png')} style={{width : 30, height : 30}} />
                     </TouchableOpacity>
                   </Right>
                 </ListItem>
-              </TouchableOpacity>
+               
             })
           }
         </List>
