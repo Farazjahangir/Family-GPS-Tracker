@@ -44,7 +44,7 @@ class Home extends Component {
     
     return (
       <View style={{flex: 1}}>
-        <CustomHeader title="Home" msgIcon addCircleIcon />
+        <CustomHeader title="Home" addCircleIcon />
           {!!userObj && 
             <MapView 
             initialRegion={{

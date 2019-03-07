@@ -49,21 +49,10 @@ class CustomHeader extends Component {
                 >
                 <Image 
                     source={require('../../assets/icons/addCircle.png')} 
-                    style={{width :40 , height :40 , marginRight : 5}} 
+                    style={{width :40 , height :40 , marginRight : 20}} 
                     />
                 </TouchableOpacity>
                 }
-                {this.props.msgIcon &&
-                    <TouchableOpacity>
-                    <Image 
-                        source={require('../../assets/icons/msgIcon.png')} 
-                        style={{width :40 , height :40 , marginRight : 5}} 
-                        />
-                    </TouchableOpacity>
-                    
-
-                }
-
                 <TouchableOpacity
                     onPress = {()=>{this.logout()}}      
                     style={{marginBottom : 5}}

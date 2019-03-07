@@ -42,7 +42,7 @@ class circles extends Component {
     const { isLoading, userCircles, errorMessage } = this.state
     return (
       <View>
-        <CustomHeader title="Circles" msgIcon addCircleIcon />
+        <CustomHeader title="Circles" addCircleIcon />
         <View style={{ alignItems: 'center' }}>
           <CustomButton
             title={'Create Circle'}
