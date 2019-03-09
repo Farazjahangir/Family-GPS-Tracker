@@ -10,12 +10,13 @@ import {
     Left,
     Text
 } from 'native-base'
+import { connect } from 'react-redux'
 
 import CustomHeader from '../../Components/CustomHeader/CustomHeader'
 import CustomButton from '../../Components/CustomButton/CustomButton'
 import { geetingCircleMembers } from '../../Config/Firebase/Firebase'
 
-export default class CircleDetails extends Component {
+class CircleDetails extends Component {
     constructor() {
         super()
         this.state = {
@@ -47,7 +48,8 @@ export default class CircleDetails extends Component {
         this.props.navigation.push('InviteScreen' , {circleCode})
     }
     render() {
-        const { members, circleName, users, isLoading, admin } = this.state
+        const { circleName, users, isLoading, admin } = this.state
+        const { userUid } = this.props.userObj
         return (
             <View style={{flex:1}}>
                 <CustomHeader title={circleName} backArrow />
@@ -67,6 +69,8 @@ export default class CircleDetails extends Component {
                         })
                     }
                 </List>
+                {userUid === admin
+                    &&
                     <View style={{flex : 1, justifyContent:"flex-end" , alignItems : 'flex-end' , padding : 10}}>
                         <CustomButton 
                             title={'+'} 
@@ -75,10 +79,25 @@ export default class CircleDetails extends Component {
                             onPress={()=>{this.invitePeoples()}}
                         />
                     </View>
+                }
             </View>
         )
     }
 }
+
+
+const mapDispatchToProps = () => {
+    return {}
+  
+  }
+  const mapStateToProps = (state) => {
+    return {
+      userObj: state.authReducer.user
+    }
+  }
+
+  export default connect(mapStateToProps, mapDispatchToProps)(CircleDetails)
+  
 
 const styles = StyleSheet.create({
     addBtn : {

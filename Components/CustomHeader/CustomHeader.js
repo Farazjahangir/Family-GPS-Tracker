@@ -25,6 +25,8 @@ class CustomHeader extends Component {
         this.props.navigation.replace('Login')
     }      
     render(){
+        console.log(this.props);
+        
         return(
             <Header style={{marginTop : 25 , backgroundColor : '#fff'}}>
             

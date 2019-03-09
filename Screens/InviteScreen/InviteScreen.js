@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 import { Text, View, Image, StyleSheet } from 'react-native'
 import { Form, Item, Input, Label, Spinner } from 'native-base';
-
+import { connect } from 'react-redux'
 import CustomHeader from '../../Components/CustomHeader/CustomHeader'
 import CustomButton from '../../Components/CustomButton/CustomButton'
 
-export default class InviteScreen extends Component {
+class InviteScreen extends Component {
     constructor() {
         super()
         this.state = {
@@ -22,6 +22,7 @@ export default class InviteScreen extends Component {
 
     sendCode() {
         const { circleCode, number } = this.state
+        const { userName } = this.props.userObj
         this.setState({ isLoading: true })
 
         fetch('https://family-tracking-sms-service.herokuapp.com/sms', {
@@ -31,7 +32,7 @@ export default class InviteScreen extends Component {
             },
             method: 'POST',
             body: JSON.stringify({
-                subject: `Use this code '${circleCode}' to add in a circle and track your family and friends`,
+                subject: `${userName} invited you to join his circle. Circle is '${circleCode}'`,
                 to: number
             })
         })
@@ -81,6 +82,19 @@ export default class InviteScreen extends Component {
         )
     }
 }
+
+const mapDispatchToProps = () => {
+    return {}
+  
+  }
+  const mapStateToProps = (state) => {
+    return {
+      userObj: state.authReducer.user
+    }
+  }
+  
+  export default connect(mapStateToProps, mapDispatchToProps)(InviteScreen)
+
 
 const styles = StyleSheet.create({
     container: {

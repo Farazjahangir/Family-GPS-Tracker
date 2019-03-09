@@ -35,9 +35,6 @@ class Home extends Component {
   }
   render() {
     const { userObj } = this.state
-    console.log('Longitude' , userObj.long);
-    console.log('Latitude' , userObj.lat);
-    
     return (
       <View style={{flex: 1}}>
         <CustomHeader title="Home" addCircleIcon />

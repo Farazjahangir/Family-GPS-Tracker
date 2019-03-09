@@ -17,6 +17,12 @@ const DrawerNavigator = createDrawerNavigator({
     Circles: {
         screen: Circles
     },
+    CreateCirlce : {
+        screen : CreateCirlce
+    },
+    JoinCircle : {
+        screen : JoinCircle
+    }
 });
 
 const AppNavigator = createStackNavigator({
