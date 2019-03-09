@@ -65,7 +65,8 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 const mapStateToProps = (state) => {
-
+    console.log('Login_mapState' , state);
+    
     return {
         userObj : state.authReducer.user
     }

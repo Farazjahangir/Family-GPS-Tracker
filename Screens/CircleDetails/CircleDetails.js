@@ -29,9 +29,15 @@ export default class CircleDetails extends Component {
     async componentDidMount() {
         const { members, circleName, admin } = this.props.navigation.state.params.circleObj
         this.setState({ circleName })
-        geetingCircleMembers(members).then((users) => {
-            this.setState({ users, isLoading: false, admin })
-        })
+        try{
+            const users = await geetingCircleMembers(members)
+                console.log('usersArrObj==>' , users);
+                this.setState({ users, isLoading: false, admin })
+        }
+        catch(e){
+            console.log('Error' , e);
+            
+        }
     }
     invitePeoples(){
         const { circleCode } = this.props.navigation.state.params.circleObj
@@ -49,7 +55,7 @@ export default class CircleDetails extends Component {
                 <List style={{ marginTop: 20 }}>
                     {!!users &&
                         users.map((val) => {
-                            return <ListItem thumbnail>
+                            return <ListItem thumbnail style={{marginTop : 20}}>
                                 <Left>
                                     <Thumbnail square source={{ uri: val.profilePicUrl }} style={{ width: 80, height: 80 }} />
                                 </Left>

@@ -70,8 +70,7 @@ const loginWithFacebook = async () => {
     }
   }
 
-  const creatingCircle = (circleObj)=>{    
-    const userUid =  firebase.auth().currentUser.uid;
+  const creatingCircle = (circleObj , userUid)=>{    
     const members = []
     members.push(userUid)
     db.collection('Circles').add({
@@ -83,16 +82,12 @@ const loginWithFacebook = async () => {
     return "success"
   }
 
-  const gettingCircles = async () =>{
+  const gettingCircles = async (userUid) =>{
     console.log('gettingCircles' , gettingCircles);
-    console.log('userUid' ,firebase.auth().currentUser.uid );
-    
-    
     const circlesArr = []
     try{
       console.log('try==>');
       
-      const userUid =  firebase.auth().currentUser.uid;
       console.log('userUid' , userUid);
       
       const snapshot = await db.collection('Circles').where('members' , 'array-contains' , userUid).get()
@@ -108,25 +103,50 @@ const loginWithFacebook = async () => {
     }
   }
   
-  const geetingCircleMembers = (membersArr)=>{
+  const geetingCircleMembers = async (membersArr)=>{
     const usersArrObj = []
-    return new Promise((resolve , reject)=>{
-        membersArr.map((uid)=>{
-         db.collection('users').doc(uid).get()
-         .then((doc)=>{
-           usersArrObj.push(doc.data()) 
-           resolve(usersArrObj)
-         })
-        })
-    })
+    try{
+      for(var i=0 ; i < membersArr.length; i++){
+       const usersData =  await db.collection('users').doc(membersArr[i]).get()
+          usersArrObj.push(usersData.data()) 
+      }
+      return usersArrObj
+    }
+    catch(e){
+      throw e
+    }
+  }
+
+  const addingUserInCircle = async (circleCode , userUid)=>{
+    let collectionId;
+    console.log('userUid-Adding' , userUid);
+    console.log('CirlceCode' , circleCode)
+    try{
+      const snapshot = await db.collection('Circles').where('circleCode' , '==' , circleCode).get()
+      snapshot.forEach((doc)=>{
+        console.log('DOCUMENT' , doc.id);
+        
+        collectionId =  doc.id
+      })
+      await db.collection('Circles').doc(collectionId).set({
+        members : firebase.firestore.FieldValue.arrayUnion(userUid)
+      } , {merge : true})
+      
+      return 'uid set'        
+    }
+    catch(e){
+      throw e
+    }
   }
   
 
   export {
+    firebase,
     loginWithFacebook,
     SavingUserData,
     checkingUserProfile,
     creatingCircle,
     gettingCircles,
-    geetingCircleMembers
+    geetingCircleMembers,
+    addingUserInCircle
   }

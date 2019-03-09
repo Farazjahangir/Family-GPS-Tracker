@@ -6,6 +6,7 @@ import Circles from '../../Screens/Circles/Circles'
 import CreateCirlce from '../../Screens/CreateCircle/CreateCircle'
 import CircleDetails from '../../Screens/CircleDetails/CircleDetails'
 import InviteScreen from '../../Screens/InviteScreen/InviteScreen'
+import JoinCircle from '../../Screens/JoinCircle/JoinCircle'
 
 
 
@@ -13,8 +14,8 @@ const DrawerNavigator = createDrawerNavigator({
     Home: {
         screen: Home,
     },
-    Circles : {
-        screen : Circles
+    Circles: {
+        screen: Circles
     },
 });
 
@@ -28,8 +29,8 @@ const AppNavigator = createStackNavigator({
     Home: {
         screen: DrawerNavigator,
     },
-    Circles : {
-        screen : Circles
+    Circles: {
+        screen: Circles
     },
     CreateCirlce: {
         screen: CreateCirlce,
@@ -37,15 +38,18 @@ const AppNavigator = createStackNavigator({
     CircleDetails: {
         screen: CircleDetails,
     },
-    InviteScreen : {
-        screen : InviteScreen
+    InviteScreen: {
+        screen: InviteScreen
+    },
+    JoinCircle: {
+        screen: JoinCircle
     }
-},{
-    headerMode: 'none',
-    navigationOptions: {
-        headerVisible: false,
-    }
-});
+}, {
+        headerMode: 'none',
+        navigationOptions: {
+            headerVisible: false,
+        }
+    });
 
 const Navigator = createAppContainer(AppNavigator)
 

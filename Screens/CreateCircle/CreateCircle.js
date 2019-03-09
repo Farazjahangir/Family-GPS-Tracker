@@ -6,8 +6,9 @@ import CustomButton from '../../Components/CustomButton/CustomButton'
 import CustomHeader from '../../Components/CustomHeader/CustomHeader'
 import { creatingCircle } from '../../Config/Firebase/Firebase'
 import { createRandomString } from '../../helper'
+import { connect } from 'react-redux'
 
-export default class CreateCircle extends Component {
+class CreateCircle extends Component {
     constructor(){
         super()
         this.state = {
@@ -16,13 +17,14 @@ export default class CreateCircle extends Component {
     }
 
     async createCircle(){
+        const { userUid } = this.props.userObj
         const circleName = this.state.circleName
         const circleCode = createRandomString()
         circleObj = {
             circleName,
             circleCode
         }
-        const result = await creatingCircle(circleObj)
+        const result = await creatingCircle(circleObj , userUid)
         console.log('Result' , result);
         
         
@@ -52,6 +54,22 @@ export default class CreateCircle extends Component {
     )
   }
 }
+
+
+const mapDispatchToProps = () => {
+    return {}
+  
+  }
+  const mapStateToProps = (state) => {
+    return {
+        userObj : state.authReducer.user
+    }
+  }
+  
+  
+  
+  export default connect(mapStateToProps ,mapDispatchToProps)(CreateCircle)
+  
 
 const styles = StyleSheet.create({
     container : {

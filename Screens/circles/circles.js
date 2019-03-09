@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { View, StyleSheet, TouchableOpacity, Image } from 'react-native'
+import { connect } from 'react-redux'
 
 import {
   Spinner,
@@ -15,7 +16,7 @@ import {
 
 import CustomHeader from '../../Components/CustomHeader/CustomHeader'
 import CustomButton from '../../Components/CustomButton/CustomButton'
-import { gettingCircles } from '../../Config/Firebase/Firebase'
+import { gettingCircles , firebase } from '../../Config/Firebase/Firebase'
 
 
 class circles extends Component {
@@ -29,19 +30,34 @@ class circles extends Component {
   }
 
   async componentDidMount() {
+    const db = firebase.firestore()
+    const { userUid } = this.props.userObj
     try {
-      const circlesArr = await gettingCircles()
-      console.log('circlesArr' , circlesArr);
+      // const circlesArr = await gettingCircles(userUid)
+        db.collection('Circles').where('members' , 'array-contains' , userUid)
+          .onSnapshot((snapshot)=>{
+            const circlesArr = []
+            snapshot.forEach((change)=>{
+                  console.log('Change_Added=====>' , change.data());
+                  circlesArr.push(change.data())
+                 this.setState({userCircles : circlesArr, isLoading: false})
+              })
+          })
+      // console.log('circlesArr' , circlesArr);
       
-      this.setState({ isLoading: false, userCircles: circlesArr })
+      // this.setState({ isLoading: false, userCircles: circlesArr })
     }
     catch (e) {
+      console.log('CAtch==>' , e);
+      
       this.setState({ errorMessage: e, isLoading: false })
     }
 
   }
   render() {
     const { isLoading, userCircles, errorMessage } = this.state
+    console.log('userCircles ====>' , userCircles);
+    
     return (
       <View>
         <CustomHeader title="Circles" addCircleIcon />
@@ -51,6 +67,12 @@ class circles extends Component {
             buttonStyle={styles.createBtn}
             textStyle={styles.createBtnText}
             onPress={() => { this.props.navigation.push('CreateCirlce') }}
+          />
+          <CustomButton
+            title={'Join a cricle'}
+            buttonStyle={styles.joinCircle}
+            textStyle={styles.joinCircleText}
+            onPress = {()=>{this.props.navigation.push('JoinCircle')}}
           />
         </View>
         {!!isLoading && <Spinner color='blue' />}
@@ -83,7 +105,20 @@ class circles extends Component {
   }
 }
 
-export default circles
+
+const mapDispatchToProps = () => {
+  return {}
+
+}
+const mapStateToProps = (state) => {
+  return {
+      userObj : state.authReducer.user
+  }
+}
+
+
+
+export default connect(mapStateToProps ,mapDispatchToProps)(circles)
 
 
 
@@ -104,6 +139,20 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   createBtnText: {
+    padding: 8,
+    fontSize: 14,
+    color: '#fff'
+  },
+  joinCircle: {
+    backgroundColor: '#2ecc71',
+    borderWidth: 2,
+    borderColor: '#2ecc71',
+    width: 220,
+    borderRadius: 15,
+    marginTop: 15,
+    alignItems: 'center'
+  },
+  joinCircleText: {
     padding: 8,
     fontSize: 14,
     color: '#fff'
