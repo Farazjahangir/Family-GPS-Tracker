@@ -1,11 +1,43 @@
 import React, { Component } from 'react'
 import { Text, View, Image, StyleSheet } from 'react-native'
+import { Form, Item, Input, Label } from 'native-base';
+
 import CustomHeader from '../../Components/CustomHeader/CustomHeader'
 import CustomButton from '../../Components/CustomButton/CustomButton'
 
 export default class InviteScreen extends Component {
+    constructor(){
+        super()
+        this.state = {
+            number : '+92',
+            circleCode : null
+        }
+    }
+
+    componentDidMount(){
+        const circleCode = this.props.navigation.state.params.circleCode
+        this.setState({circleCode})
+    }
+
+    sendCode(){
+        const { circleCode , number } = this.state
+
+        fetch('https://family-tracking-sms-service.herokuapp.com/sms' , {
+            headers : {
+                "Content-Type" : "application/json",
+                "Accept" : "application/json"                
+            },
+            method : 'POST',
+            body : JSON.stringify({
+                subject :  `Use this code '${circleCode}' to add in a circle and track your family and friends`,
+                to : number
+            })
+        })
+    }
   render() {
-      const circleCode = this.props.navigation.state.params.circleCode
+      const { number , circleCode } = this.state
+      console.log('Number' , number);
+      
     return (
       <View style={{flex : 1}}>
         <CustomHeader title={'Invite Peoples'} backArrow />
@@ -18,11 +50,23 @@ export default class InviteScreen extends Component {
             <Text style={styles.text}>
                 Send this code with people you want to join your circle
             </Text>
-            <Text>{circleCode}</Text>
+            <Text style={styles.circleCode}>{circleCode}</Text>
+            <Form>
+            <Item floatingLabel   style={{ width: '60%' }}>
+              <Label>Write Phone Number</Label>
+              <Input
+                value={number}
+                keyboardType={'number-pad'}
+                maxLength={13}
+                onChange={(e) => { this.setState({ number : e.nativeEvent.text }) }}
+              />
+            </Item>
+            </Form>
             <CustomButton 
                 title={'Send'}
                 buttonStyle={styles.sendBtn}
                 textStyle={styles.sendBtnText}
+                onPress={()=>{this.sendCode()}}
             />
         </View>
       </View>
@@ -37,11 +81,11 @@ const styles = StyleSheet.create({
         justifyContent : 'center',
     },
     addIcon : {
-        width : 170,
-        height : 170
+        width :140,
+        height :140
     },
     text : {
-        fontSize : 22,
+        fontSize : 19,
         color : '#7f8fa6',
         marginTop : 30,
         textAlign : 'center'
@@ -59,5 +103,11 @@ const styles = StyleSheet.create({
         padding : 5,
         fontSize : 19,
         textAlign : 'center'
+    },
+    circleCode : {
+        fontSize : 25,
+        color :  '#7f8fa6',
+        paddingTop : 9,
+        fontWeight : '400'
     }
 })

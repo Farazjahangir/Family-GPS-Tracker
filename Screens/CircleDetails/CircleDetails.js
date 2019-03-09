@@ -34,7 +34,9 @@ export default class CircleDetails extends Component {
         })
     }
     invitePeoples(){
-        const { circleCode } = this.props.navigation.state.params
+        const { circleCode } = this.props.navigation.state.params.circleObj
+        console.log('InvitingCode' ,circleCode );
+        
 
         this.props.navigation.push('InviteScreen' , {circleCode})
     }

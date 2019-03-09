@@ -84,9 +84,17 @@ const loginWithFacebook = async () => {
   }
 
   const gettingCircles = async () =>{
+    console.log('gettingCircles' , gettingCircles);
+    console.log('userUid' ,firebase.auth().currentUser.uid );
+    
+    
     const circlesArr = []
     try{
+      console.log('try==>');
+      
       const userUid =  firebase.auth().currentUser.uid;
+      console.log('userUid' , userUid);
+      
       const snapshot = await db.collection('Circles').where('members' , 'array-contains' , userUid).get()
       snapshot.forEach((val)=>{
         circlesArr.push(val.data())
@@ -94,6 +102,8 @@ const loginWithFacebook = async () => {
       return circlesArr
     }
     catch(e){
+      console.log('CAtch==>' , e);
+      
       throw e
     }
   }

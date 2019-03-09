@@ -31,6 +31,8 @@ class circles extends Component {
   async componentDidMount() {
     try {
       const circlesArr = await gettingCircles()
+      console.log('circlesArr' , circlesArr);
+      
       this.setState({ isLoading: false, userCircles: circlesArr })
     }
     catch (e) {
