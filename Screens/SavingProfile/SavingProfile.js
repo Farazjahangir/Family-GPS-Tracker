@@ -43,12 +43,12 @@ class SavingProfile extends Component {
 
         }
     }
-        
-    static navigationOptions = {
-        header : null
-    }
     componentDidMount() {
-        const { userName, userUid, profilePicUrl } = this.props.navigation.state.params.userObj
+        const { 
+            userName, 
+            userUid, 
+            profilePicUrl 
+        } = this.props.navigation.state.params.userObj
         this.setState({ userName, profilePicUrl, userUid })
 
         if (Platform.OS === 'android' && !Constants.isDevice) {
@@ -166,9 +166,7 @@ const mapDispatchToProps = (dispatch) => {
 }
 const mapStateToProps = (state) => {
 
-    return {
-        // userObj : state.authReducer.user
-    }
+    return {}
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SavingProfile)

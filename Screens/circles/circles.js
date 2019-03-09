@@ -16,7 +16,7 @@ import {
 
 import CustomHeader from '../../Components/CustomHeader/CustomHeader'
 import CustomButton from '../../Components/CustomButton/CustomButton'
-import { gettingCircles , firebase } from '../../Config/Firebase/Firebase'
+import { firebase } from '../../Config/Firebase/Firebase'
 
 
 class circles extends Component {
@@ -33,31 +33,23 @@ class circles extends Component {
     const db = firebase.firestore()
     const { userUid } = this.props.userObj
     try {
-      // const circlesArr = await gettingCircles(userUid)
-        db.collection('Circles').where('members' , 'array-contains' , userUid)
-          .onSnapshot((snapshot)=>{
-            const circlesArr = []
-            snapshot.forEach((change)=>{
-                  console.log('Change_Added=====>' , change.data());
-                  circlesArr.push(change.data())
-                 this.setState({userCircles : circlesArr, isLoading: false})
-              })
+      db.collection('Circles').where('members', 'array-contains', userUid)
+        .onSnapshot((snapshot) => {
+          const circlesArr = []
+          snapshot.forEach((change) => {
+            circlesArr.push(change.data())
+            this.setState({ userCircles: circlesArr, isLoading: false })
           })
-      // console.log('circlesArr' , circlesArr);
-      
-      // this.setState({ isLoading: false, userCircles: circlesArr })
+        })
     }
     catch (e) {
-      console.log('CAtch==>' , e);
-      
       this.setState({ errorMessage: e, isLoading: false })
     }
 
   }
   render() {
     const { isLoading, userCircles, errorMessage } = this.state
-    console.log('userCircles ====>' , userCircles);
-    
+
     return (
       <View>
         <CustomHeader title="Circles" addCircleIcon />
@@ -72,7 +64,7 @@ class circles extends Component {
             title={'Join a cricle'}
             buttonStyle={styles.joinCircle}
             textStyle={styles.joinCircleText}
-            onPress = {()=>{this.props.navigation.push('JoinCircle')}}
+            onPress={() => { this.props.navigation.push('JoinCircle') }}
           />
         </View>
         {!!isLoading && <Spinner color='blue' />}
@@ -81,20 +73,20 @@ class circles extends Component {
           {!!userCircles &&
             userCircles.map((val, i) => {
               return <ListItem avatar key={i}>
-                  <Left>
-                    <Thumbnail source={require('../../assets/icons/user.png')} style={{ width: 20, height: 20 }} />
-                    <Text>{val.members.length}</Text>
-                  </Left>
-                  <Body>
-                    <Text>{val.circleName}</Text>
-                  </Body>
-                  <Right>
-                    <TouchableOpacity onPress = {()=>{this.props.navigation.push('CircleDetails' ,  {circleObj : val})}}>
-                      <Image source = {require('../../assets/icons/rightArrow.png')} style={{width : 30, height : 30}} />
-                    </TouchableOpacity>
-                  </Right>
-                </ListItem>
-               
+                <Left>
+                  <Thumbnail source={require('../../assets/icons/user.png')} style={{ width: 20, height: 20 }} />
+                  <Text>{val.members.length}</Text>
+                </Left>
+                <Body>
+                  <Text>{val.circleName}</Text>
+                </Body>
+                <Right>
+                  <TouchableOpacity onPress={() => { this.props.navigation.push('CircleDetails', { circleObj: val }) }}>
+                    <Image source={require('../../assets/icons/rightArrow.png')} style={{ width: 30, height: 30 }} />
+                  </TouchableOpacity>
+                </Right>
+              </ListItem>
+
             })
           }
         </List>
@@ -112,13 +104,13 @@ const mapDispatchToProps = () => {
 }
 const mapStateToProps = (state) => {
   return {
-      userObj : state.authReducer.user
+    userObj: state.authReducer.user
   }
 }
 
 
 
-export default connect(mapStateToProps ,mapDispatchToProps)(circles)
+export default connect(mapStateToProps, mapDispatchToProps)(circles)
 
 
 

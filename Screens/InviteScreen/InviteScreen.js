@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View, Image, StyleSheet, Alert } from 'react-native'
+import { Text, View, Image, StyleSheet } from 'react-native'
 import { Form, Item, Input, Label, Spinner } from 'native-base';
 
 import CustomHeader from '../../Components/CustomHeader/CustomHeader'
@@ -37,19 +37,11 @@ export default class InviteScreen extends Component {
         })
             .then(() => {
                 this.setState({ isLoading: false })
-                Alert.alert(
-                    'Alert Title',
-                    'My Alert Msg',
-                    [
-                      {text: 'OK'},
-                    ],
-                  );
+                alert('Message Successfully Sent')
             })
     }
     render() {
         const { number, circleCode, isLoading } = this.state
-        console.log('Number', number);
-
         return (
             <View style={{ flex: 1 }}>
                 <CustomHeader title={'Invite Peoples'} backArrow />
@@ -57,12 +49,16 @@ export default class InviteScreen extends Component {
                     <Image
                         source={require('../../assets/icons/add-group.png')}
                         style={styles.addIcon}
-                        />
+                    />
                     <Text style={styles.text}>
                         Send this code with people you want to join your circle
-            </Text>
-                    <Text style={styles.circleCode}>{circleCode}</Text>
-                        {isLoading && <Spinner color='blue' />}
+                    </Text>
+
+                    <Text style={styles.circleCode}>
+                        {circleCode}
+                    </Text>
+                    {isLoading && <Spinner color='blue' />}
+
                     <Form>
                         <Item floatingLabel style={{ width: '60%' }}>
                             <Label>Write Phone Number</Label>

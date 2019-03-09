@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import { Text, View, StyleSheet } from 'react-native'
 import { Item , Input, Label } from 'native-base'
+import { connect } from 'react-redux'
 
 import CustomButton from '../../Components/CustomButton/CustomButton'
 import CustomHeader from '../../Components/CustomHeader/CustomHeader'
 import { creatingCircle } from '../../Config/Firebase/Firebase'
 import { createRandomString } from '../../helper'
-import { connect } from 'react-redux'
 
 class CreateCircle extends Component {
     constructor(){
@@ -25,7 +25,7 @@ class CreateCircle extends Component {
             circleCode
         }
         const result = await creatingCircle(circleObj , userUid)
-        console.log('Result' , result);
+        alert('Circle Created')
         
         
     }

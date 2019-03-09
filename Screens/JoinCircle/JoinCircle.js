@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
 import { Text, View, StyleSheet } from 'react-native'
 import { Form, Item, Input, Label, Spinner } from 'native-base';
+import { connect } from 'react-redux'
+
 import { addingUserInCircle } from '../../Config/Firebase/Firebase'
 import CustomHeader from '../../Components/CustomHeader/CustomHeader'
 import CustomButton from '../../Components/CustomButton/CustomButton'
-import { connect } from 'react-redux'
 
 class JoinCircle extends Component {
     constructor(){
@@ -20,10 +21,10 @@ class JoinCircle extends Component {
 
         try{
             const result = await addingUserInCircle(circleCode , userUid)
+            alert('circle joined')
         }
         catch(e){
             console.log("Error" , e);
-            
         }
     }
   render() {

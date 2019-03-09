@@ -27,23 +27,23 @@ export default class CircleDetails extends Component {
     }
 
     async componentDidMount() {
-        const { members, circleName, admin } = this.props.navigation.state.params.circleObj
+        const { 
+            members, 
+            circleName, 
+            admin 
+        } = this.props.navigation.state.params.circleObj
+
         this.setState({ circleName })
         try{
             const users = await geetingCircleMembers(members)
-                console.log('usersArrObj==>' , users);
-                this.setState({ users, isLoading: false, admin })
+            this.setState({ users, isLoading: false, admin })
         }
         catch(e){
-            console.log('Error' , e);
-            
+            console.log('Error' , e);    
         }
     }
     invitePeoples(){
         const { circleCode } = this.props.navigation.state.params.circleObj
-        console.log('InvitingCode' ,circleCode );
-        
-
         this.props.navigation.push('InviteScreen' , {circleCode})
     }
     render() {

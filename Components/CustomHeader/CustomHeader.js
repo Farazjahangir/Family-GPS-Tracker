@@ -27,6 +27,7 @@ class CustomHeader extends Component {
     render(){
         return(
             <Header style={{marginTop : 25 , backgroundColor : '#fff'}}>
+            
             <Left>
                 {this.props.backArrow
                 ?
@@ -39,9 +40,11 @@ class CustomHeader extends Component {
                 </TouchableOpacity>
                 }
             </Left>
+
             <Body style={{flexDirection : 'row' , justifyContent : 'center'}}>
                 <Title style={{color : 'black'}}>{this.props.title}</Title>
             </Body>
+            
             <Right>
                 {this.props.addCircleIcon &&
                 <TouchableOpacity

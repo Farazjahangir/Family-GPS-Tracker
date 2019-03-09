@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import {  View, ScrollView } from 'react-native'
 import { 
-  Container, 
-  Content, 
   List, 
   ListItem, 
   Left, 
@@ -25,8 +23,6 @@ class Home extends Component {
   }
 
   componentDidMount(){
-    console.log('Home');
-    
     if(this.props.userObj){
         this.setState({userObj : this.props.userObj})
     }
@@ -53,10 +49,10 @@ class Home extends Component {
               latitudeDelta: 0.0922,
               longitudeDelta: 0.0421,
               }}
-              style={{flex : 0.7}}
+              style={{flex :1}}
             />
           }
-            <View style={{flex : 0.3}}>
+            {/* <View style={{flex : 0.3}}>
           <ScrollView vertical={true} >
             <List>
               <ListItem avatar>
@@ -98,13 +94,13 @@ class Home extends Component {
 
               </List>
           </ScrollView>
-            </View>
+            </View> */}
       </View>
     )
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = () => {
   return {}
 }
 const mapStateToProps = (state) => {

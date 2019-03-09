@@ -70,6 +70,7 @@ const loginWithFacebook = async () => {
     }
   }
 
+
   const creatingCircle = (circleObj , userUid)=>{    
     const members = []
     members.push(userUid)
@@ -82,33 +83,27 @@ const loginWithFacebook = async () => {
     return "success"
   }
 
-  const gettingCircles = async (userUid) =>{
-    console.log('gettingCircles' , gettingCircles);
-    const circlesArr = []
-    try{
-      console.log('try==>');
-      
-      console.log('userUid' , userUid);
-      
-      const snapshot = await db.collection('Circles').where('members' , 'array-contains' , userUid).get()
-      snapshot.forEach((val)=>{
-        circlesArr.push(val.data())
-      })
-      return circlesArr
-    }
-    catch(e){
-      console.log('CAtch==>' , e);
-      
-      throw e
-    }
-  }
+  // const gettingCircles = async (userUid) =>{
+  //   const circlesArr = []
+  //   try{
+  //     const snapshot = await db.collection('Circles').where('members' , 'array-contains' , userUid).get()
+  //     snapshot.forEach((val)=>{
+  //       circlesArr.push(val.data())
+  //     })
+  //     return circlesArr
+  //   }
+  //   catch(e){
+  //     throw e
+  //   }
+  // }
+  
   
   const geetingCircleMembers = async (membersArr)=>{
     const usersArrObj = []
     try{
       for(var i=0 ; i < membersArr.length; i++){
-       const usersData =  await db.collection('users').doc(membersArr[i]).get()
-          usersArrObj.push(usersData.data()) 
+        const usersData =  await db.collection('users').doc(membersArr[i]).get()
+        usersArrObj.push(usersData.data()) 
       }
       return usersArrObj
     }
@@ -119,13 +114,9 @@ const loginWithFacebook = async () => {
 
   const addingUserInCircle = async (circleCode , userUid)=>{
     let collectionId;
-    console.log('userUid-Adding' , userUid);
-    console.log('CirlceCode' , circleCode)
     try{
       const snapshot = await db.collection('Circles').where('circleCode' , '==' , circleCode).get()
       snapshot.forEach((doc)=>{
-        console.log('DOCUMENT' , doc.id);
-        
         collectionId =  doc.id
       })
       await db.collection('Circles').doc(collectionId).set({
@@ -146,7 +137,7 @@ const loginWithFacebook = async () => {
     SavingUserData,
     checkingUserProfile,
     creatingCircle,
-    gettingCircles,
+    // gettingCircles,
     geetingCircleMembers,
     addingUserInCircle
   }

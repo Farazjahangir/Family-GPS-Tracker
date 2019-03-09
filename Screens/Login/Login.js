@@ -5,32 +5,41 @@ import {
     StyleSheet
 } from 'react-native'
 
+import { Spinner } from 'native-base'
+import { connect } from 'react-redux'
+
 import CustomButton from '../../Components/CustomButton/CustomButton'
 import { loginWithFacebook, checkingUserProfile } from '../../Config/Firebase/Firebase'
-import { connect } from 'react-redux'
 import { loginUser } from '../../Redux/actions/authActions'
 
 class Login extends Component {
-
-    static navigationOptions = {
-        header : null
+    constructor(){
+        super()
+        this.state = {
+            isLoading : true
+        }
     }
 
     componentDidMount(){
-        console.log('Login' , this.props);
         if(this.props.userObj){
             this.props.navigation.replace('Home')
+        }
+        else{
+            this.setState({isLoading : false})
         }
     }
 
     componentWillReceiveProps(nextProps){
-        console.log('Login_Next' , nextProps);
         if(nextProps.userObj){
             nextProps.navigation.replace('Home')
         } 
+        else{
+            this.setState({isLoading : false})
+        }
     }
 
     async login(){
+        this.setState({isLoading : true})
         const userObj = await loginWithFacebook() 
         let checkingUser = await checkingUserProfile()
 
@@ -41,12 +50,15 @@ class Login extends Component {
             this.setState({isLoading : false})
         }  
         else{
+            this.setState({isLoading : false})
             this.props.navigation.push('SavingProfile' , {userObj})
         }
     }
     render() {
+        const { isLoading } = this.state
         return (
             <View style={styles.container}>
+                {isLoading && <Spinner color='blue' />}
                 <Text style={styles.heading}>Family GPS Tracker</Text>
                 <CustomButton 
                     title={'Login With Facebook'} 
