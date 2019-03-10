@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, StyleSheet } from 'react-native'
+import { View, StyleSheet, ScrollView } from 'react-native'
 
 import {
     Spinner,
@@ -54,6 +54,7 @@ class CircleDetails extends Component {
             <View style={{flex:1}}>
                 <CustomHeader title={circleName} backArrow />
                 {!!isLoading && <Spinner color='blue' />}
+                <ScrollView>
                 <List style={{ marginTop: 20 }}>
                     {!!users &&
                         users.map((val) => {
@@ -69,6 +70,7 @@ class CircleDetails extends Component {
                         })
                     }
                 </List>
+                </ScrollView>
                 {userUid === admin
                     &&
                     <View style={{flex : 1, justifyContent:"flex-end" , alignItems : 'flex-end' , padding : 10}}>

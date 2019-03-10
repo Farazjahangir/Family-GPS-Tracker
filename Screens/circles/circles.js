@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, StyleSheet, TouchableOpacity, Image } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native'
 import { connect } from 'react-redux'
 
 import {
@@ -52,46 +52,48 @@ class circles extends Component {
 
     return (
       <View>
-        <CustomHeader title="Circles" addCircleIcon />
-        <View style={{ alignItems: 'center' }}>
-          <CustomButton
-            title={'Create Circle'}
-            buttonStyle={styles.createBtn}
-            textStyle={styles.createBtnText}
-            onPress={() => { this.props.navigation.push('CreateCirlce') }}
-          />
-          <CustomButton
-            title={'Join a cricle'}
-            buttonStyle={styles.joinCircle}
-            textStyle={styles.joinCircleText}
-            onPress={() => { this.props.navigation.push('JoinCircle') }}
-          />
-        </View>
-        {!!isLoading && <Spinner color='blue' />}
+        <CustomHeader title="Circles" backArrow />
+        <ScrollView vertical={true}>
+          <View style={{ alignItems: 'center' }}>
+            <CustomButton
+              title={'Create Circle'}
+              buttonStyle={styles.createBtn}
+              textStyle={styles.createBtnText}
+              onPress={() => { this.props.navigation.push('CreateCirlce') }}
+            />
+            <CustomButton
+              title={'Join a cricle'}
+              buttonStyle={styles.joinCircle}
+              textStyle={styles.joinCircleText}
+              onPress={() => { this.props.navigation.push('JoinCircle') }}
+            />
+          </View>
+          {!!isLoading && <Spinner color='blue' />}
+          <View style={{ marginTop: 30 }}>
+            <List>
+              {!!userCircles &&
+                userCircles.map((val, i) => {
+                  return <ListItem avatar key={i}>
+                    <Left>
+                      <Thumbnail source={require('../../assets/icons/user.png')} style={{ width: 20, height: 20 }} />
+                      <Text>{val.members.length}</Text>
+                    </Left>
+                    <Body>
+                      <Text>{val.circleName}</Text>
+                    </Body>
+                    <Right>
+                      <TouchableOpacity onPress={() => { this.props.navigation.push('CircleDetails', { circleObj: val }) }}>
+                        <Image source={require('../../assets/icons/rightArrow.png')} style={{ width: 30, height: 30 }} />
+                      </TouchableOpacity>
+                    </Right>
+                  </ListItem>
 
-        <List style={{ marginTop: 30 }}>
-          {!!userCircles &&
-            userCircles.map((val, i) => {
-              return <ListItem avatar key={i}>
-                <Left>
-                  <Thumbnail source={require('../../assets/icons/user.png')} style={{ width: 20, height: 20 }} />
-                  <Text>{val.members.length}</Text>
-                </Left>
-                <Body>
-                  <Text>{val.circleName}</Text>
-                </Body>
-                <Right>
-                  <TouchableOpacity onPress={() => { this.props.navigation.push('CircleDetails', { circleObj: val }) }}>
-                    <Image source={require('../../assets/icons/rightArrow.png')} style={{ width: 30, height: 30 }} />
-                  </TouchableOpacity>
-                </Right>
-              </ListItem>
-
-            })
-          }
-        </List>
-
-        {!!errorMessage && <Text style={{ color: 'red', fontSize: 17 }}>{errorMessage}</Text>}
+                })
+              }
+            </List>
+          </View>
+          {!!errorMessage && <Text style={{ color: 'red', fontSize: 17 }}>{errorMessage}</Text>}
+        </ScrollView>
       </View>
     )
   }

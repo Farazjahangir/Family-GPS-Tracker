@@ -11,18 +11,19 @@ import {
     Constants,
     Location,
     Permissions,
-    ImagePicker
+    ImagePicker,
 } from 'expo';
 
 import {
     Form,
     Item,
     Input,
-    Label
+    Label,
+    Spinner
 } from 'native-base';
 
 import CustomButton from '../../Components/CustomButton/CustomButton'
-import { SavingUserData }  from '../../Config/Firebase/Firebase'
+import { SavingUserData } from '../../Config/Firebase/Firebase'
 import { connect } from 'react-redux'
 import { loginUser } from '../../Redux/actions/authActions'
 import { makeBlobFromURI } from '../../helper'
@@ -39,15 +40,17 @@ class SavingProfile extends Component {
             image: null,
             blob: false,
             location: null,
-            errorMessage: ''
+            errorMessage: '',
+            pushToken: '',
+            isLoading : false
 
         }
     }
-    componentDidMount() {
-        const { 
-            userName, 
-            userUid, 
-            profilePicUrl 
+   async componentDidMount() {
+        const {
+            userName,
+            userUid,
+            profilePicUrl
         } = this.props.navigation.state.params.userObj
         this.setState({ userName, profilePicUrl, userUid })
 
@@ -60,102 +63,109 @@ class SavingProfile extends Component {
         }
     }
 
-    _getLocationAsync = async () => {
-        let { status } = await Permissions.askAsync(Permissions.LOCATION);
-        if (status !== 'granted') {
-            this.setState({
-                errorMessage: 'Permission to access location was denied',
-            });
-        }
-        let location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
-        this.setState({ location });
-    };
 
-    async pickImage() {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            allowsEditing: true,
-            aspect: [4, 4]
+_getLocationAsync = async () => {
+    let { status } = await Permissions.askAsync(Permissions.LOCATION);
+    if (status !== 'granted') {
+        this.setState({
+            errorMessage: 'Permission to access location was denied',
         });
-        if (!result.cancelled) {
-            this.setState({ profilePicUrl: result.uri })
-        }
-    };
+    }
+    let location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
+    this.setState({ location });
+};
 
-    async savingDataToFirebase() {
-        const { 
-            userName, 
-            userUid, 
-            contactNum, 
-            location 
-        } = this.state
+async pickImage() {
+    let result = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,
+        aspect: [4, 4]
+    });
+    if (!result.cancelled) {
+        this.setState({ profilePicUrl: result.uri })
+    }
+};
 
-        let {  profilePicUrl } = this.state
-        if (userName === "" || contactNum === "") {
-          this.setState({ error: true })
-          return
-        }
-        this.setState({ error: false })
-        if(!profilePicUrl.startsWith('https')){
-          // Function To Change Image Path In Blob 
-            await makeBlobFromURI(profilePicUrl).then((blob)=>{
-            profilePicUrl = blob
-            })    
-        }
-        const userObj = {
-          userName,
-          profilePicUrl,
-          contactNum,
-          userUid,
-          lat : location.coords.latitude,
-          long : location.coords.longitude
-        }
-        const userData = await SavingUserData(userObj)
-        await this.props.loginUser(userData)
-        this.props.navigation.replace('Home')        
-      }
+async savingDataToFirebase() {
+    const {
+        userName,
+        userUid,
+        contactNum,
+        location,
+    } = this.state
+
+    this.setState({isLoading : true})
     
 
-    render() {
-        const { userName, profilePicUrl, isLoading, error } = this.state
-
-        return (
-            <View style={styles.container}>
-                <Image
-                    source={profilePicUrl ? { uri: profilePicUrl } : require('../../assets/images/dummyProfile.png')}
-                    style={styles.profilePic}
-                />
-                <CustomButton
-                    title={'Change Your Picture'}
-                    buttonStyle = {styles.uploadPicBtn}
-                    textStyle = {styles.uploadPicBtnText}
-                    onPress={() => { this.pickImage() }} />
-                <Form>
-                    <Item floatingLabel style={{ width: '80%' }}>
-                        <Label>Username</Label>
-                        <Input
-                            value={userName ? userName : ''}
-                            onChange={(e) => { this.setState({ userName: e.nativeEvent.text }) }}
-                        />
-                    </Item>
-                    <Item floatingLabel>
-                        <Label>Your Contact Num</Label>
-                        <Input
-                            onChange={(e) => { this.setState({ contactNum: e.nativeEvent.text }) }}
-                            keyboardType={'number-pad'}
-                            maxLength={11}
-                        />
-                    </Item>
-                </Form>
-                <CustomButton
-                    title={'Finish'}
-                   buttonStyle = {styles.finishBtn}
-                   textStyle = {styles.finishBtnText}
-                    onPress={() => { this.savingDataToFirebase() }}
-                />
-                {error && <Text style={{ fontSize: 18, color: 'red' }}>All Fields Are Compulsory</Text>}
-            </View>
-        );
+    let { profilePicUrl } = this.state
+    if (userName === "" || contactNum === "") {
+        this.setState({ error: true })
+        return
     }
+    this.setState({ error: false })
+    if (!profilePicUrl.startsWith('https')) {
+        // Function To Change Image Path In Blob 
+        await makeBlobFromURI(profilePicUrl).then((blob) => {
+            profilePicUrl = blob
+        })
+    }
+    const userObj = {
+        userName,
+        profilePicUrl,
+        contactNum,
+        userUid,
+        lat: location.coords.latitude,
+        long: location.coords.longitude,
+        
+    }
+    const userData = await SavingUserData(userObj)
+    await this.props.loginUser(userData)
+    this.setState({isLoading : false})
+    this.props.navigation.replace('Home')
+}
+
+
+render() {
+    const { userName, profilePicUrl, isLoading, error } = this.state
+
+    return (
+        <View style={styles.container}>
+            <Image
+                source={profilePicUrl ? { uri: profilePicUrl } : require('../../assets/images/dummyProfile.png')}
+                style={styles.profilePic}
+            />
+            <CustomButton
+                title={'Change Your Picture'}
+                buttonStyle={styles.uploadPicBtn}
+                textStyle={styles.uploadPicBtnText}
+                onPress={() => { this.pickImage() }} />
+            <Form>
+                {isLoading && <Spinner color='blue' />}
+                <Item floatingLabel style={{ width: '80%' }}>
+                    <Label>Username</Label>
+                    <Input
+                        value={userName ? userName : ''}
+                        onChange={(e) => { this.setState({ userName: e.nativeEvent.text }) }}
+                    />
+                </Item>
+                <Item floatingLabel>
+                    <Label>Your Contact Num</Label>
+                    <Input
+                        onChange={(e) => { this.setState({ contactNum: e.nativeEvent.text }) }}
+                        keyboardType={'number-pad'}
+                        maxLength={11}
+                    />
+                </Item>
+            </Form>
+            <CustomButton
+                title={'Finish'}
+                buttonStyle={styles.finishBtn}
+                textStyle={styles.finishBtnText}
+                onPress={() => { this.savingDataToFirebase() }}
+            />
+            {error && <Text style={{ fontSize: 18, color: 'red' }}>All Fields Are Compulsory</Text>}
+        </View>
+    );
+}
 }
 
 const mapDispatchToProps = (dispatch) => {
@@ -210,5 +220,5 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 18,
     }
-});    
+});
 

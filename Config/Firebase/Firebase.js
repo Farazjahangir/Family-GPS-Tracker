@@ -54,7 +54,7 @@ const loginWithFacebook = async () => {
           contactNum : userObj.contactNum,
           userUid : userObj.userUid,
           lat : userObj.lat,
-          long : userObj.long
+          long : userObj.long,
         })  
         return userObj
   }
