@@ -130,6 +130,27 @@ const loginWithFacebook = async () => {
       throw e
     }
   }
+
+  const gettingUsersPushTokens = (circleName , userUid)=>{
+    console.log('UserUid' , userUid);
+      userPushTokensArr = []
+      return new Promise((resolve , reject)=>{
+        db.collection('Circles').where('circleName' , '==' , circleName)
+          .onSnapshot((snapshot)=>{
+              snapshot.forEach(async (data)=>{
+                userUidArr = data.data().members
+                
+                for(var i= 0; i < userUidArr.length; i++){
+                  const doc = await db.collection('users').doc(userUidArr[i]).get()
+                      if(doc.id !== userUid){
+                        await userPushTokensArr.push(doc.data().token)
+                      }                    
+                }
+                resolve(userPushTokensArr)
+              })
+            })
+      })
+  }
   
 
   export {
@@ -140,5 +161,6 @@ const loginWithFacebook = async () => {
     creatingCircle,
     // gettingCircles,
     geetingCircleMembers,
-    addingUserInCircle
+    addingUserInCircle,
+    gettingUsersPushTokens
   }

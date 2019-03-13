@@ -17,8 +17,9 @@ import MapView from 'react-native-maps';
 import CustomHeader from '../../Components/CustomHeader/CustomHeader'
 import CustomButton from '../../Components/CustomButton/CustomButton'
 import markerPng from '../../assets/icons/marker.png'
-import { firebase } from '../../Config/Firebase/Firebase'
 
+import { firebase, gettingUsersPushTokens } from '../../Config/Firebase/Firebase'
+import { sendingPushNotification } from '../../helper'
 class Home extends Component {
   constructor() {
     super()
@@ -31,6 +32,7 @@ class Home extends Component {
   }
 
   componentDidMount() {
+
     if (this.props.userObj) {
       console.log('componentDidMount');
 
@@ -78,6 +80,17 @@ class Home extends Component {
     }
   }
 
+  sendNotification(){
+    const { selectedCircle, userObj } = this.state
+
+    gettingUsersPushTokens(selectedCircle , userObj.userUid).then((pushTokens)=>{
+      console.log('pushTokens' , pushTokens);
+      
+      const sent = sendingPushNotification(pushTokens , userObj.userName)
+      
+    })
+  }
+
 
   render() {
     const { userObj, selectedCircle, userCircles, circlesList } = this.state
@@ -96,15 +109,20 @@ class Home extends Component {
               selectedValue={selectedCircle}
               onValueChange={(itemValue) => { this.setState({ selectedCircle: itemValue }) }}
             >
-              {!!circlesList ? userCircles.map((val) =>
-                <Picker.Item label={val.circleName} value={val.circleName} />
+              {!!circlesList ? userCircles.map((val , i) =>
+                <Picker.Item label={val.circleName} value={val.circleName} key={i} />
               )
                 :
                 <Picker.Item label='Fetching Circles' value='Fetching Circles' />
               }
             </Picker>
           </Item>
-          <CustomButton title="Help" buttonStyle={styles.helpBtn} textStyle={styles.helpBtnText} />
+          <CustomButton 
+            title="Help" 
+            buttonStyle={styles.helpBtn} 
+            textStyle={styles.helpBtnText}
+            onPress = {()=>{this.sendNotification()}} 
+          />
         </View>
 
 
