@@ -1,97 +1,155 @@
 import React, { Component } from 'react'
-import {  View, ScrollView } from 'react-native'
-import { 
-  List, 
-  ListItem, 
-  Left, 
-  Body, 
-  Right, 
-  Thumbnail, 
-  Text 
+import { View, ScrollView, Image, StyleSheet } from 'react-native'
+import {
+  List,
+  ListItem,
+  Left,
+  Body,
+  Right,
+  Thumbnail,
+  Text,
+  Item,
+  Picker
 } from 'native-base';
 import { connect } from 'react-redux'
 import MapView from 'react-native-maps';
 
 import CustomHeader from '../../Components/CustomHeader/CustomHeader'
+import CustomButton from '../../Components/CustomButton/CustomButton'
+import markerPng from '../../assets/icons/marker.png'
+import { firebase } from '../../Config/Firebase/Firebase'
 
 class Home extends Component {
-  constructor(){
+  constructor() {
     super()
     this.state = {
-      userObj : ''
+      userObj: '',
+      selectedCircle: '',
+      userCircles: [],
+      circlesList: false
     }
   }
 
-  componentDidMount(){
-    if(this.props.userObj){
-        this.setState({userObj : this.props.userObj})
+  componentDidMount() {
+    if (this.props.userObj) {
+      console.log('componentDidMount');
+
+      this.setState({ userObj: this.props.userObj }, () => {
+        this.gettingCircles()
+      })
     }
   }
 
-  componentWillReceiveProps(nextProps){
-    if(nextProps.userObj){
-        this.setState({userObj : nextProps.userObj})
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.userObj) {
+      console.log('componentWillReceiveProps');
+
+      this.setState({ userObj: nextProps.userObj }, () => {
+        this.gettingCircles()
+      })
     }
   }
+
+  gettingCircles = () => {
+    console.log('gettingCircles', this.state);
+
+    const db = firebase.firestore()
+    const { userUid } = this.state.userObj
+    const { userCircles } = this.state
+    console.log('UserUid', userUid);
+
+
+    try {
+      db.collection('Circles').where('members', 'array-contains', userUid)
+        .onSnapshot((snapshot) => {
+          const circlesArr = []
+          snapshot.forEach((change) => {
+            circlesArr.push(change.data())
+          })
+          console.log('CirclesArr', circlesArr);
+          this.setState({ userCircles: circlesArr, isLoading: false, circlesList: true })
+
+        })
+    }
+    catch (e) {
+      this.setState({ errorMessage: e, isLoading: false })
+      console.log('CAtch==>', e);
+
+    }
+  }
+
+
   render() {
-    const { userObj } = this.state
+    const { userObj, selectedCircle, userCircles, circlesList } = this.state
+    let coords = {
+      latitude: userObj.lat, longitude: userObj.long
+    }
+    console.log('This.State===>', this.state);
+
     return (
-      <View style={{flex: 1}}>
+      <View style={{ flex: 1 }}>
         <CustomHeader title="Home" addCircleIcon />
-          {!!userObj && 
-            <MapView 
+        <View style={styles.pickerContainer}>
+          <Item picker style={{ width: '90%', }}>
+            <Picker
+              mode='dropdown'
+              selectedValue={selectedCircle}
+              onValueChange={(itemValue) => { this.setState({ selectedCircle: itemValue }) }}
+            >
+              {!!circlesList ? userCircles.map((val) =>
+                <Picker.Item label={val.circleName} value={val.circleName} />
+              )
+                :
+                <Picker.Item label='Fetching Circles' value='Fetching Circles' />
+              }
+            </Picker>
+          </Item>
+          <CustomButton title="Help" buttonStyle={styles.helpBtn} textStyle={styles.helpBtnText} />
+        </View>
+
+
+        {!!userObj &&
+          <MapView
             initialRegion={{
-              latitude: userObj.lat ,
+              latitude: userObj.lat,
               longitude: userObj.long,
               latitudeDelta: 0.0922,
               longitudeDelta: 0.0421,
-              }}
-              style={{flex :1}}
-            />
-          }
-            {/* <View style={{flex : 0.3}}>
-          <ScrollView vertical={true} >
-            <List>
-              <ListItem avatar>
-                <Left>
-                  <Thumbnail source={require('../../assets/images/dummyProfile.png')} />
-                </Left>
-                <Body>
-                  <Text>Kumar Pratik</Text>
-                  <Text note>Doing what you like will always keep you happy . .</Text>
-                </Body>
-                <Right>
-                  <Text note>3:43 pm</Text>
-                </Right>
-              </ListItem>
-              <ListItem avatar>
-                <Left>
-                  <Thumbnail source={require('../../assets/images/dummyProfile.png')} />
-                </Left>
-                <Body>
-                  <Text>Kumar Pratik</Text>
-                  <Text note>Doing what you like will always keep you happy . .</Text>
-                </Body>
-                <Right>
-                  <Text note>3:43 pm</Text>
-                </Right>
-              </ListItem>
-              <ListItem avatar>
-                <Left>
-                  <Thumbnail source={require('../../assets/images/dummyProfile.png')} />
-                </Left>
-                <Body>
-                  <Text>Kumar Pratik</Text>
-                  <Text note>Doing what you like will always keep you happy . .</Text>
-                </Body>
-                <Right>
-                  <Text note>3:43 pm</Text>
-                </Right>
-              </ListItem>
-
-              </List>
-          </ScrollView>
-            </View> */}
+            }}
+            style={{ flex: 0.75 }}
+          >
+            <MapView.Marker
+              coordinate={coords}
+              title="My Marker"
+              description="Some description"
+            >
+              <View
+                style={{
+                  width: 60,
+                  height: 60,
+                  justifyContent: "center",
+                  alignItems: "center"
+                }}
+              >
+                <Image
+                  source={markerPng}
+                  style={{ width: 50, height: 50 }}
+                // resizeMode="contain"
+                />
+                <View style={{ position: "absolute", top: 10 }}>
+                  <Image
+                    source={{ uri: userObj.profilePicUrl }}
+                    style={{
+                      width: 28,
+                      height: 28,
+                      borderRadius: 10
+                    }}
+                  />
+                </View>
+              </View>
+            </MapView.Marker>
+          </MapView>
+        }
       </View>
     )
   }
@@ -103,7 +161,34 @@ const mapDispatchToProps = () => {
 const mapStateToProps = (state) => {
 
   return {
-      userObj : state.authReducer.user
+    userObj: state.authReducer.user
   }
 }
-export default connect(mapStateToProps , mapDispatchToProps)(Home)
+export default connect(mapStateToProps, mapDispatchToProps)(Home)
+
+
+const styles = StyleSheet.create({
+  pickerContainer: {
+    flex: 0.25,
+    alignItems: 'flex-start',
+    marginTop: 15,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  },
+  helpBtn : {
+    backgroundColor : '#eb2f06',
+    borderWidth : 1,
+    borderColor : '#eb2f06',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop : 8,
+    borderRadius : 15,
+    width : 120,
+  },
+  helpBtnText : {
+    color : '#fff',
+    padding : 4,
+    fontSize : 19,
+    textAlign : 'center'
+  }
+})

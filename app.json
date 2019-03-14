@@ -8,13 +8,16 @@
       "ios",
       "android"
     ],
+    "android" : {
+      "package": "com.tracking_app.app"
+    },
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icons/appIcon.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/newsplash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgorund" : "#009432"
     },
     "updates": {
       "fallbackToCacheTimeout": 0

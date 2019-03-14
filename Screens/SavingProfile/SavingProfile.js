@@ -12,6 +12,7 @@ import {
     Location,
     Permissions,
     ImagePicker,
+    Notifications 
 } from 'expo';
 
 import {
@@ -23,7 +24,7 @@ import {
 } from 'native-base';
 
 import CustomButton from '../../Components/CustomButton/CustomButton'
-import { SavingUserData } from '../../Config/Firebase/Firebase'
+import { SavingUserData, } from '../../Config/Firebase/Firebase'
 import { connect } from 'react-redux'
 import { loginUser } from '../../Redux/actions/authActions'
 import { makeBlobFromURI } from '../../helper'
@@ -42,11 +43,14 @@ class SavingProfile extends Component {
             location: null,
             errorMessage: '',
             pushToken: '',
-            isLoading : false
+            isLoading : false,
+            token : null,
 
         }
     }
    async componentDidMount() {
+       console.log('componentDidMount');
+       let { token } = this.state
         const {
             userName,
             userUid,
@@ -61,8 +65,21 @@ class SavingProfile extends Component {
         } else {
             this._getLocationAsync();
         }
-    }
 
+        const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+        finalStatus = status;
+        
+          // Stop here if the user did not grant permissions
+          if(finalStatus !== 'granted') {
+            return;
+          }
+        
+          // Get the token that uniquely identifies this device
+          token = await Notifications.getExpoPushTokenAsync();
+          this.setState({token})
+          
+        }
+    
 
 _getLocationAsync = async () => {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
@@ -91,8 +108,10 @@ async savingDataToFirebase() {
         userUid,
         contactNum,
         location,
+        token
     } = this.state
-
+    console.log('Profile=====>' , token);
+    
     this.setState({isLoading : true})
     
 
@@ -115,6 +134,7 @@ async savingDataToFirebase() {
         userUid,
         lat: location.coords.latitude,
         long: location.coords.longitude,
+        token
         
     }
     const userData = await SavingUserData(userObj)
