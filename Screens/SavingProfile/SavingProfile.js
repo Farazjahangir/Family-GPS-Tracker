@@ -49,7 +49,6 @@ class SavingProfile extends Component {
         }
     }
    async componentDidMount() {
-       console.log('componentDidMount');
        let { token } = this.state
         const {
             userName,
@@ -110,8 +109,6 @@ async savingDataToFirebase() {
         location,
         token
     } = this.state
-    console.log('Profile=====>' , token);
-    
     this.setState({isLoading : true})
     
 

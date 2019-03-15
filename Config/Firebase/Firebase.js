@@ -84,19 +84,6 @@ const loginWithFacebook = async () => {
     return "success"
   }
 
-  // const gettingCircles = async (userUid) =>{
-  //   const circlesArr = []
-  //   try{
-  //     const snapshot = await db.collection('Circles').where('members' , 'array-contains' , userUid).get()
-  //     snapshot.forEach((val)=>{
-  //       circlesArr.push(val.data())
-  //     })
-  //     return circlesArr
-  //   }
-  //   catch(e){
-  //     throw e
-  //   }
-  // }
   
   
   const geetingCircleMembers = async (membersArr)=>{
@@ -132,8 +119,8 @@ const loginWithFacebook = async () => {
   }
 
   const gettingUsersPushTokens = (circleName , userUid)=>{
-    console.log('UserUid' , userUid);
       userPushTokensArr = []
+      usersData = []
       return new Promise((resolve , reject)=>{
         db.collection('Circles').where('circleName' , '==' , circleName)
           .onSnapshot((snapshot)=>{
@@ -144,9 +131,10 @@ const loginWithFacebook = async () => {
                   const doc = await db.collection('users').doc(userUidArr[i]).get()
                       if(doc.id !== userUid){
                         await userPushTokensArr.push(doc.data().token)
-                      }                    
+                      }   
+                      await usersData.push(doc.data());
                 }
-                resolve(userPushTokensArr)
+                resolve({userPushTokensArr , usersData})
               })
             })
       })

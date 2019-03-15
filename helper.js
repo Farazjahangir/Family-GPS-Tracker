@@ -18,7 +18,7 @@ const createRandomString = () => {
 }
 
 const sendingPushNotification = (pushTokens , userName) =>{
-    console.log('sendingPushNotification' , pushTokens);
+    console.log('PushTokens' , pushTokens);
     
     for(var i=0; i < pushTokens.length; i++){
         fetch("https://exp.host/--/api/v2/push/send" , {

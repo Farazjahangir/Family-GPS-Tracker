@@ -27,39 +27,48 @@ class Home extends Component {
       userObj: '',
       selectedCircle: '',
       userCircles: [],
-      circlesList: false
+      circlesList: false,
+      pushTokens : [],
+      usersData : []
     }
   }
 
   componentDidMount() {
 
     if (this.props.userObj) {
-      console.log('componentDidMount');
-
       this.setState({ userObj: this.props.userObj }, () => {
         this.gettingCircles()
+        
       })
     }
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.userObj) {
-      console.log('componentWillReceiveProps');
-
       this.setState({ userObj: nextProps.userObj }, () => {
         this.gettingCircles()
       })
     }
   }
 
-  gettingCircles = () => {
-    console.log('gettingCircles', this.state);
+  selectedCircle(itemValue){
+    this.setState({ selectedCircle: itemValue } , ()=>{
+      // this.gettingcircleMembersPushToken()
+      const { selectedCircle, userObj } = this.state
+      gettingUsersPushTokens(selectedCircle , userObj.userUid).then((usersDataObj)=>{
+        console.log('gettingUsersPushTokens+++++++++' , usersDataObj);
+        this.setState({
+          pushTokens : usersDataObj.userPushTokensArr,
+          usersData : usersDataObj.usersData
+        })
+      })  
+    })
+  }
 
+  gettingCircles = () => {
     const db = firebase.firestore()
     const { userUid } = this.state.userObj
     const { userCircles } = this.state
-    console.log('UserUid', userUid);
-
 
     try {
       db.collection('Circles').where('members', 'array-contains', userUid)
@@ -68,9 +77,7 @@ class Home extends Component {
           snapshot.forEach((change) => {
             circlesArr.push(change.data())
           })
-          console.log('CirclesArr', circlesArr);
-          this.setState({ userCircles: circlesArr, isLoading: false, circlesList: true })
-
+          this.setState({userCircles: circlesArr, isLoading: false, circlesList: true})
         })
     }
     catch (e) {
@@ -80,16 +87,21 @@ class Home extends Component {
     }
   }
 
+  
   sendNotification(){
-    const { selectedCircle, userObj } = this.state
-
-    gettingUsersPushTokens(selectedCircle , userObj.userUid).then((pushTokens)=>{
-      console.log('pushTokens' , pushTokens);
-      
-      const sent = sendingPushNotification(pushTokens , userObj.userName)
-      
-    })
+    const { userObj, pushTokens } = this.state
+    sendingPushNotification(pushTokens , userObj.userName)
   }
+
+  // gettingcircleMembersPushToken = () =>{
+  //   const { selectedCircle, userObj } = this.state
+  //   console.log('gettingUsersPushTokens==============>' , selectedCircle);
+  //   gettingUsersPushTokens(selectedCircle , userObj.userUid).then((pushTokens)=>{
+  //     console.log('gettingUsersPushTokens+++++++++' , pushTokens);
+  //     this.setState({pushTokens})
+  //   })
+
+  // }
 
 
   render() {
@@ -97,8 +109,6 @@ class Home extends Component {
     let coords = {
       latitude: userObj.lat, longitude: userObj.long
     }
-    console.log('This.State===>', this.state);
-
     return (
       <View style={{ flex: 1 }}>
         <CustomHeader title="Home" addCircleIcon />
@@ -107,7 +117,7 @@ class Home extends Component {
             <Picker
               mode='dropdown'
               selectedValue={selectedCircle}
-              onValueChange={(itemValue) => { this.setState({ selectedCircle: itemValue }) }}
+              onValueChange={(itemValue)=>{this.selectedCircle(itemValue)}}
             >
               {!!circlesList ? userCircles.map((val , i) =>
                 <Picker.Item label={val.circleName} value={val.circleName} key={i} />
@@ -117,12 +127,14 @@ class Home extends Component {
               }
             </Picker>
           </Item>
-          <CustomButton 
-            title="Help" 
-            buttonStyle={styles.helpBtn} 
-            textStyle={styles.helpBtnText}
-            onPress = {()=>{this.sendNotification()}} 
-          />
+         {circlesList && 
+           <CustomButton 
+              title="Help" 
+              buttonStyle={styles.helpBtn} 
+              textStyle={styles.helpBtnText}
+              onPress = {()=>{this.sendNotification()}} 
+            />   
+        } 
         </View>
 
 
