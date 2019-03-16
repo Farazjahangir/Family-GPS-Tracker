@@ -29,7 +29,7 @@ class Home extends Component {
       userCircles: [],
       circlesList: false,
       pushTokens : [],
-      usersData : []
+      usersData : [],
     }
   }
 
@@ -105,10 +105,7 @@ class Home extends Component {
 
 
   render() {
-    const { userObj, selectedCircle, userCircles, circlesList } = this.state
-    let coords = {
-      latitude: userObj.lat, longitude: userObj.long
-    }
+    const { userObj, selectedCircle, userCircles, circlesList, usersData } = this.state
     return (
       <View style={{ flex: 1 }}>
         <CustomHeader title="Home" addCircleIcon />
@@ -140,44 +137,50 @@ class Home extends Component {
 
         {!!userObj &&
           <MapView
+          followsUserLocation
+          showsUserLocation
             initialRegion={{
-              latitude: userObj.lat,
-              longitude: userObj.long,
+              latitude:24.8616617,
+              longitude:67.0685374,
               latitudeDelta: 0.0922,
               longitudeDelta: 0.0421,
             }}
             style={{ flex: 0.75 }}
           >
-            <MapView.Marker
-              coordinate={coords}
-              title="My Marker"
-              description="Some description"
-            >
-              <View
-                style={{
-                  width: 60,
-                  height: 60,
-                  justifyContent: "center",
-                  alignItems: "center"
-                }}
+          {usersData.map((users)=>{
+            console.log('MAp' , users);
+            
+             return (<MapView.Marker
+                coordinate={{latitude : users.lat , longitude : users.long}}
+                title={userObj.userUid === users.userUid ? 'You' : users.userName}
               >
-                <Image
-                  source={markerPng}
-                  style={{ width: 50, height: 50 }}
-                // resizeMode="contain"
-                />
-                <View style={{ position: "absolute", top: 10 }}>
+                <View
+                  style={{
+                    width: 60,
+                    height: 60,
+                    justifyContent: "center",
+                    alignItems: "center"
+                  }}
+                >
                   <Image
-                    source={{ uri: userObj.profilePicUrl }}
-                    style={{
-                      width: 28,
-                      height: 28,
-                      borderRadius: 10
-                    }}
+                    source={markerPng}
+                    style={{ width: 50, height: 50 }}
+                  // resizeMode="contain"
                   />
+                  <View style={{ position: "absolute", top: 10 }}>
+                    <Image
+                      source={{ uri: users.profilePicUrl }}
+                      style={{
+                        width: 28,
+                        height: 28,
+                        borderRadius: 10
+                      }}
+                    />
+                  </View>
                 </View>
-              </View>
-            </MapView.Marker>
+              </MapView.Marker>
+          )
+          })}
           </MapView>
         }
       </View>
