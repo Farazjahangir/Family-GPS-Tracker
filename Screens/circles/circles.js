@@ -150,6 +150,6 @@ const styles = StyleSheet.create({
     padding: 8,
     fontSize: 14,
     color: '#fff'
-  }
+  },
 });
 

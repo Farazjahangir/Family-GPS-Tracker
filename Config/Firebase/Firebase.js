@@ -105,16 +105,21 @@ const loginWithFacebook = async () => {
     try{
       const snapshot = await db.collection('Circles').where('circleCode' , '==' , circleCode).get()
       snapshot.forEach((doc)=>{
+        const members = doc.data().members
+        // for(var i=0; i < members.length; i++){
+        //   if(members[i] === userUid)  return 'Already Joined'
+        // }
         collectionId =  doc.id
+        
       })
       await db.collection('Circles').doc(collectionId).set({
         members : firebase.firestore.FieldValue.arrayUnion(userUid)
       } , {merge : true})
       
-      return 'uid set'        
-    }
+      return 'Circle Joined'        
+      }
     catch(e){
-      throw e
+      throw 'Check Your Circle Code and then try again'
     }
   }
 

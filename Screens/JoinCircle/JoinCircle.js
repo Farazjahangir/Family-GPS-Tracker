@@ -12,26 +12,39 @@ class JoinCircle extends Component {
         super()
         this.state = {
             circleCode : '',
+            isLoading : false
         }
     }
 
     async addInCircle(){
         const { circleCode } = this.state
         const { userUid } = this.props.userObj
-
+        this.setState({isLoading : true})
+        if(circleCode === ''){
+            alert('Write Your Circle Code')
+            this.setState({isLoading : false})
+            return
+        }
         try{
             const result = await addingUserInCircle(circleCode , userUid)
-            alert('circle joined')
+            this.setState({isLoading : false})
+            alert(result)
         }
         catch(e){
-            console.log("Error" , e);
+            this.setState({isLoading : false})
+            alert(e)
         }
     }
   render() {
-      const { circleCode } = this.state
+      const { circleCode, isLoading } = this.state
     return (
       <View style={{flex : 1}}>
         <CustomHeader title={'Join Circle'} backArrow />
+        {isLoading &&
+        <View style={styles.loaderDiv}>
+            <Spinner color='blue' />
+        </View>
+        }
         <View style={styles.container}>
             <Text style={styles.text}>Please , enter valid invite code</Text>
             <Form>
@@ -75,20 +88,22 @@ const styles = StyleSheet.create({
     container : {
         flex : 1,
         alignItems : 'center',
-        justifyContent : 'center'
+        justifyContent : 'center',
+        opacity : 0.6
+
     },
     text : {
         fontSize : 22,
         textAlign : 'center',
-        color : '#7f8c8d',
+        color : '#353b48',
         fontWeight : '600'
     },
     submitBtn : {
-        backgroundColor : '#e74c3c',
+        backgroundColor : '#eb2f06',
         borderWidth : 2,
         borderRadius : 25,
         width :'60%',
-        borderColor : '#e74c3c',
+        borderColor : '#eb2f06',
         marginTop : 15
     },
     submitBtnText : {
@@ -98,10 +113,20 @@ const styles = StyleSheet.create({
         textAlign : 'center'
     },
     note : {
-        color : '#7f8c8d',
+        color : '#353b48',
         textAlign : 'center',
         fontSize : 19,
         marginTop : 15,
         fontWeight : '600'
-    }
+    },
+    loaderDiv : {
+        position : 'absolute',
+        height : '100%',
+        width : '100%',
+        backgroundColor : '#fff',
+        opacity : 0.6,
+        alignItems : 'center',
+        justifyContent : 'center',
+        zIndex : 100
+    },
 })
