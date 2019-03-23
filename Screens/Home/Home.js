@@ -20,6 +20,7 @@ import markerPng from '../../assets/icons/marker.png'
 
 import { firebase, gettingUsersPushTokens } from '../../Config/Firebase/Firebase'
 import { sendingPushNotification } from '../../helper'
+
 class Home extends Component {
   constructor() {
     super()
@@ -30,6 +31,7 @@ class Home extends Component {
       circlesList: false,
       pushTokens : [],
       usersData : [],
+      circleSelected : 0
     }
   }
 
@@ -45,24 +47,27 @@ class Home extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.userObj) {
-      this.setState({ userObj: nextProps.userObj }, () => {
+      this.setState({ userObj: nextProps.userObj  }, () => {
         this.gettingCircles()
       })
     }
   }
 
   selectedCircle(itemValue){
-    this.setState({ selectedCircle: itemValue } , ()=>{
-      // this.gettingcircleMembersPushToken()
-      const { selectedCircle, userObj } = this.state
-      gettingUsersPushTokens(selectedCircle , userObj.userUid).then((usersDataObj)=>{
-        console.log('gettingUsersPushTokens+++++++++' , usersDataObj);
-        this.setState({
-          pushTokens : usersDataObj.userPushTokensArr,
-          usersData : usersDataObj.usersData
-        })
-      })  
-    })
+    this.setState({ selectedCircle: itemValue })
+    console.log('selectedCircle' , itemValue);
+    const { userObj } = this.state
+
+    gettingUsersPushTokens(itemValue , userObj.userUid).then((usersDataObj)=>{
+      console.log('usersDataObj' , usersDataObj);
+      this.setState({
+        pushTokens : usersDataObj.userPushTokensArr,
+        usersData : usersDataObj.usersData
+      },()=>{
+        this.gettingRealTimeLocation()
+      })
+    })  
+
   }
 
   gettingCircles = () => {
@@ -73,36 +78,56 @@ class Home extends Component {
     try {
       db.collection('Circles').where('members', 'array-contains', userUid)
         .onSnapshot((snapshot) => {
+          console.log('workinggg')
           const circlesArr = []
           snapshot.forEach((change) => {
             circlesArr.push(change.data())
           })
           this.setState({userCircles: circlesArr, isLoading: false, circlesList: true})
         })
+      }
+      catch (e) {
+        this.setState({ errorMessage: e, isLoading: false })
+        console.log('CAtch==>', e);
+        
+      }
     }
-    catch (e) {
-      this.setState({ errorMessage: e, isLoading: false })
-      console.log('CAtch==>', e);
-
-    }
-  }
-
-  
   sendNotification(){
     const { userObj, pushTokens } = this.state
     sendingPushNotification(pushTokens , userObj.userName)
   }
 
-  // gettingcircleMembersPushToken = () =>{
-  //   const { selectedCircle, userObj } = this.state
-  //   console.log('gettingUsersPushTokens==============>' , selectedCircle);
-  //   gettingUsersPushTokens(selectedCircle , userObj.userUid).then((pushTokens)=>{
-  //     console.log('gettingUsersPushTokens+++++++++' , pushTokens);
-  //     this.setState({pushTokens})
-  //   })
 
-  // }
+  onLocationChange(location){
+    const { userObj } = this.state
+    const db = firebase.firestore()
+    const lat = location.nativeEvent.coordinate.latitude
+    const long = location.nativeEvent.coordinate.longitude
+    db.collection('users').doc(userObj.userUid).set({
+      lat,
+      long
+    } , {merge : true})
+  }
 
+ gettingRealTimeLocation = () =>{
+  const db = firebase.firestore()
+  db.collection("users").onSnapshot((querySnapshot) => {
+    let usersArr;
+    querySnapshot.docChanges().forEach(snapshot => {
+      const data = snapshot.doc.data();
+      usersArr = [];
+       usersData.forEach(users => {
+         if(users.userUid === data.userUid){
+           users.lat = data.lat
+           users.long = data.long
+         }
+         usersArr.push(users)
+       })
+    })
+    this.setState({usersData: usersArr})
+  })
+
+  } 
 
   render() {
     const { userObj, selectedCircle, userCircles, circlesList, usersData } = this.state
@@ -146,10 +171,9 @@ class Home extends Component {
               longitudeDelta: 0.0421,
             }}
             style={{ flex: 0.75 }}
+            onUserLocationChange = {(location)=>{this.onLocationChange(location)}}
           >
           {usersData.map((users)=>{
-            console.log('MAp' , users);
-            
              return (<MapView.Marker
                 coordinate={{latitude : users.lat , longitude : users.long}}
                 title={userObj.userUid === users.userUid ? 'You' : users.userName}
@@ -165,7 +189,6 @@ class Home extends Component {
                   <Image
                     source={markerPng}
                     style={{ width: 50, height: 50 }}
-                  // resizeMode="contain"
                   />
                   <View style={{ position: "absolute", top: 10 }}>
                     <Image

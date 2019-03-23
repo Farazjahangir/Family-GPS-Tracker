@@ -119,6 +119,8 @@ const loginWithFacebook = async () => {
   }
 
   const gettingUsersPushTokens = (circleName , userUid)=>{
+    console.log('gettingUsersPushTokens' , circleName);
+    
       userPushTokensArr = []
       usersData = []
       return new Promise((resolve , reject)=>{
