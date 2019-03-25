@@ -27,6 +27,8 @@ class JoinCircle extends Component {
         }
         try{
             const result = await addingUserInCircle(circleCode , userUid)
+            console.log('REsult' , result);
+            
             this.setState({isLoading : false})
             alert(result)
         }
