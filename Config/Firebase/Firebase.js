@@ -66,6 +66,7 @@ const SavingUserData = async (userObj) => {
   }
 }
 
+// Checking User Already in database or not
 const checkingUserProfile = async () => {
   try {
     const userUid = firebase.auth().currentUser.uid;
@@ -76,6 +77,7 @@ const checkingUserProfile = async () => {
     throw 'not found'
   }
 }
+
 
 
 const creatingCircle = (circleObj, userUid) => {
@@ -92,6 +94,7 @@ const creatingCircle = (circleObj, userUid) => {
 
 
 
+
 const geetingCircleMembers = async (membersArr) => {
   const usersArrObj = []
   try {
@@ -105,6 +108,7 @@ const geetingCircleMembers = async (membersArr) => {
     throw e
   }
 }
+
 
 const addingUserInCircle = async (circleCode, userUid) => {
   let collectionId;
@@ -134,6 +138,7 @@ const addingUserInCircle = async (circleCode, userUid) => {
     throw 'Check Your Circle Code and then try again'
   }
 }
+
 
 const gettingUsersPushTokens = (circleName, userUid) => {
   console.log('gettingUsersPushTokens', circleName);

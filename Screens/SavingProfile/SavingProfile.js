@@ -88,6 +88,8 @@ _getLocationAsync = async () => {
         });
     }
         let location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
+        console.log('Location' , location);
+        
         this.setState({ location });
 };
 
@@ -135,7 +137,7 @@ async savingDataToFirebase() {
         
     }
     const userData = await SavingUserData(userObj)
-    alert(userData)
+    // alert(userData)
     await this.props.loginUser(userData)
     this.setState({isLoading : false})
     this.props.navigation.replace('Home')

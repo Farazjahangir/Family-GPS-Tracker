@@ -51,7 +51,7 @@ class JoinCircle extends Component {
             <Text style={styles.text}>Please , enter valid invite code</Text>
             <Form>
                 <Item floatingLabel style={{ width: '60%' }}>
-                    <Label>Write Phone Number</Label>
+                    <Label>Circle Code</Label>
                     <Input
                         value={circleCode}
                         onChange={(e) => { this.setState({ circleCode: e.nativeEvent.text }) }}

@@ -32,7 +32,6 @@ class Home extends Component {
       circlesList: false,
       pushTokens : [],
       usersData : [],
-      circleSelected : 0,
     }
   }
 

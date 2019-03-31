@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View, Image, StyleSheet } from 'react-native'
+import { Text, View, Image, StyleSheet, KeyboardAvoidingView } from 'react-native'
 import { Form, Item, Input, Label, Spinner } from 'native-base';
 import { connect } from 'react-redux'
 import CustomHeader from '../../Components/CustomHeader/CustomHeader'
@@ -32,12 +32,12 @@ class InviteScreen extends Component {
             },
             method: 'POST',
             body: JSON.stringify({
-                subject: `${userName} invited you to join his circle. Circle is '${circleCode}'`,
+                subject: `${userName} invited you to join his circle. Circle code is '${circleCode}'`,
                 to: number
             })
         })
             .then(() => {
-                this.setState({ isLoading: false })
+                this.setState({ isLoading: false, number : '+92' })
                 alert('Message Successfully Sent')
             })
     }
@@ -58,7 +58,11 @@ class InviteScreen extends Component {
                     <Text style={styles.circleCode}>
                         {circleCode}
                     </Text>
-                    {isLoading && <Spinner color='blue' />}
+                    {isLoading &&
+                    <View style={styles.loaderDiv}>
+                        <Spinner color='blue' />
+                    </View>
+                }
 
                     <Form>
                         <Item floatingLabel style={{ width: '60%' }}>
@@ -131,5 +135,16 @@ const styles = StyleSheet.create({
         color: '#7f8fa6',
         paddingTop: 9,
         fontWeight: '400'
-    }
+    },
+    loaderDiv: {
+        position: 'absolute',
+        height: '100%',
+        width: '100%',
+        backgroundColor: '#fff',
+        opacity: 0.6,
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 100
+    },
+
 })

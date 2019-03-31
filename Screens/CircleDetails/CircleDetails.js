@@ -43,6 +43,7 @@ class CircleDetails extends Component {
             console.log('Error' , e);    
         }
     }
+    
     invitePeoples(){
         const { circleCode } = this.props.navigation.state.params.circleObj
         this.props.navigation.push('InviteScreen' , {circleCode})
