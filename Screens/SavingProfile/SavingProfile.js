@@ -87,8 +87,8 @@ _getLocationAsync = async () => {
             errorMessage: 'Permission to access location was denied',
         });
     }
-    let location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
-    this.setState({ location });
+        let location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
+        this.setState({ location });
 };
 
 async pickImage() {
@@ -135,6 +135,7 @@ async savingDataToFirebase() {
         
     }
     const userData = await SavingUserData(userObj)
+    alert(userData)
     await this.props.loginUser(userData)
     this.setState({isLoading : false})
     this.props.navigation.replace('Home')

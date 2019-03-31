@@ -17,30 +17,26 @@ const createRandomString = () => {
     return Math.random().toString(36).substring(7);
 }
 
-const sendingPushNotification = (pushTokens , userName) =>{
+const sendingPushNotification = async (pushTokens , userName) =>{
     console.log('PushTokens' , pushTokens);
     
-    for(var i=0; i < pushTokens.length; i++){
-        fetch("https://exp.host/--/api/v2/push/send" , {
-            method : "POST",
-            headers : {
-                "content-type": "application/json"
-            },
-            body : JSON.stringify({
-                to : pushTokens[i],
-                body : `${userName} wants your help`
+    try{
+        for(var i=0; i < pushTokens.length; i++){
+            await fetch("https://exp.host/--/api/v2/push/send" , {
+                method : "POST",
+                headers : {
+                    "content-type": "application/json"
+                },
+                body : JSON.stringify({
+                    to : pushTokens[i],
+                    body : `${userName} wants your help`
+                })
             })
-        })
-        .then((res)=>{
-            return res.json()
-        })
-        .then(()=>{
-         
-        })
-        .catch((err)=>{
-            console.log('PushError' , err);
-            
-        })
+        }
+        return {message : 'Notification Successfully Sent'}
+    }
+    catch(e){
+        throw e
     }
 }
 

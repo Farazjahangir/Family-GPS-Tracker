@@ -15,9 +15,8 @@
     "orientation": "portrait",
     "icon": "./assets/icons/appIcon.png",
     "splash": {
-      "image": "./assets/newsplash.png",
-      "resizeMode": "contain",
-      "backgorund" : "#009432"
+      "image": "./assets/images/splash.png",
+      "resizeMode": "cover"
     },
     "updates": {
       "fallbackToCacheTimeout": 0

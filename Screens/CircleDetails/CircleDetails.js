@@ -53,7 +53,11 @@ class CircleDetails extends Component {
         return (
             <View style={{flex:1}}>
                 <CustomHeader title={circleName} backArrow />
-                {!!isLoading && <Spinner color='blue' />}
+                {isLoading &&
+                    <View style={styles.loaderDiv}>
+                        <Spinner color='blue' />
+                    </View>
+                }
                 <ScrollView>
                 <List style={{ marginTop: 20 }}>
                     {!!users &&
@@ -115,5 +119,16 @@ const styles = StyleSheet.create({
     addBtnText : {
         fontSize : 35,
         color : '#fff'
-    }
+    },
+    loaderDiv: {
+        position: 'absolute',
+        height: '100%',
+        width: '100%',
+        backgroundColor: '#fff',
+        opacity: 0.6,
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 100
+    },
+
 })

@@ -9,7 +9,8 @@ import {
   Thumbnail,
   Text,
   Item,
-  Picker
+  Picker,
+  Spinner
 } from 'native-base';
 import { connect } from 'react-redux'
 import MapView from 'react-native-maps';
@@ -31,7 +32,7 @@ class Home extends Component {
       circlesList: false,
       pushTokens : [],
       usersData : [],
-      circleSelected : 0
+      circleSelected : 0,
     }
   }
 
@@ -92,9 +93,15 @@ class Home extends Component {
         
       }
     }
-  sendNotification(){
+  async sendNotification(){
     const { userObj, pushTokens } = this.state
-    sendingPushNotification(pushTokens , userObj.userName)
+    try{
+      const pushMessageResult = await sendingPushNotification(pushTokens , userObj.userName)
+      alert(pushMessageResult.message)
+    }
+    catch(e){
+      alert(e.message)
+    }
   }
 
 
@@ -108,6 +115,7 @@ class Home extends Component {
       long
     } , {merge : true})
   }
+
 
  gettingRealTimeLocation = () =>{
   const db = firebase.firestore()
@@ -131,6 +139,8 @@ class Home extends Component {
 
   render() {
     const { userObj, selectedCircle, userCircles, circlesList, usersData } = this.state
+    console.log('State' , this.state);
+    
     return (
       <View style={{ flex: 1 }}>
         <CustomHeader title="Home" addCircleIcon />
@@ -165,8 +175,8 @@ class Home extends Component {
           followsUserLocation
           showsUserLocation
             initialRegion={{
-              latitude:24.8616617,
-              longitude:67.0685374,
+              latitude:userObj.lat,
+              longitude:userObj.long,
               latitudeDelta: 0.0922,
               longitudeDelta: 0.0421,
             }}

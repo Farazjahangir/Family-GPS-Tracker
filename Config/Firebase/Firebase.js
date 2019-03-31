@@ -41,24 +41,29 @@ const SavingUserData = async (userObj) => {
   const uid = userObj.userUid
 
   // If Profile Pic Url Is Blob
-  if (typeof userObj.profilePicUrl === 'object') {
-    let name = `${Date.now()} - ${uid}`
-    let message = userObj.profilePicUrl
-    await storageRef.child(name).put(message)
-    const url = await storageRef.child(name).getDownloadURL();
-    userObj.profilePicUrl = url
+  try{
+    if (typeof userObj.profilePicUrl === 'object') {
+      let name = `${Date.now()} - ${uid}`
+      let message = userObj.profilePicUrl
+      await storageRef.child(name).put(message)
+      const url = await storageRef.child(name).getDownloadURL();
+      userObj.profilePicUrl = url
+    }
+  
+    db.collection('users').doc(uid).set({
+      userName: userObj.userName,
+      profilePicUrl: userObj.profilePicUrl,
+      contactNum: userObj.contactNum,
+      userUid: userObj.userUid,
+      lat: userObj.lat,
+      long: userObj.long,
+      token: userObj.token
+    })
+    return userObj
   }
-
-  db.collection('users').doc(uid).set({
-    userName: userObj.userName,
-    profilePicUrl: userObj.profilePicUrl,
-    contactNum: userObj.contactNum,
-    userUid: userObj.userUid,
-    lat: userObj.lat,
-    long: userObj.long,
-    token: userObj.token
-  })
-  return userObj
+  catch(e){
+    return e
+  }
 }
 
 const checkingUserProfile = async () => {
